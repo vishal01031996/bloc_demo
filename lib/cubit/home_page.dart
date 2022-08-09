@@ -20,6 +20,8 @@ class _HomePageState extends State<HomePage> {
   TextEditingController numberController = TextEditingController();
   TextEditingController sumController = TextEditingController();
   int total = 0;
+  int number1 = 0;
+  int number2 = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +106,9 @@ class _HomePageState extends State<HomePage> {
                     InkWell(
                       onTap: () {
                         if (numberController.text.toString() != "") {
+                          number1 = Random().nextInt(10);
+                          number2 = Random().nextInt(10);
+                          setState(() {});
                           openDialoguebox();
                         } else {
                           Utils.showToast("Please Enter Number");
@@ -195,109 +200,124 @@ class _HomePageState extends State<HomePage> {
   }
 
   void openDialoguebox() {
-    int number1 = Random().nextInt(100);
-    int number2 = Random().nextInt(100);
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Center(
-            child: Text(
-              "Sum Of Two Numbers",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          content: SingleChildScrollView(
-            child: SizedBox(
-              width: Get.width,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Row(
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Center(
+                child: Text(
+                  "Sum Of Two Numbers",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              content: SingleChildScrollView(
+                child: SizedBox(
+                  width: Get.width,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(
-                        "$number1",
-                        style: const TextStyle(color: Colors.red, fontSize: 20),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      const Text(
-                        "+",
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        "$number2",
-                        style: const TextStyle(color: Colors.red, fontSize: 20),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      const Text(
-                        "=",
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Container(
-                        width: 100,
-                        height: 40,
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            border: Border.all(),
-                            borderRadius: BorderRadius.circular(16)),
-                        child: TextField(
-                          controller: sumController,
-                          textAlign: TextAlign.right,
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            border:
-                                OutlineInputBorder(borderSide: BorderSide.none),
+                      Row(
+                        children: [
+                          Text(
+                            "$number1",
+                            style: const TextStyle(
+                                color: Colors.red, fontSize: 20),
                           ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          const Text(
+                            "+",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Text(
+                            "$number2",
+                            style: const TextStyle(
+                                color: Colors.red, fontSize: 20),
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          const Text(
+                            "=",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Container(
+                            width: 100,
+                            height: 40,
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                border: Border.all(),
+                                borderRadius: BorderRadius.circular(16)),
+                            child: TextField(
+                              controller: sumController,
+                              textAlign: TextAlign.right,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide.none),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          total = number1 + number2;
+                          if (sumController.text.toString() != "") {
+                            if (sumController.text.toString() ==
+                                total.toString()) {
+                              homeCubit.insertnumber(
+                                numberController.text.toString(),
+                              );
+                              sumController.clear();
+                              numberController.clear();
+                              Navigator.pop(context);
+                              FocusScope.of(context).unfocus();
+                            } else {
+                              Utils.showToast("Wrong Answer");
+                              sumController.clear();
+                              number1 = Random().nextInt(10);
+                              number2 = Random().nextInt(10);
+                              FocusScope.of(context).unfocus();
+                              setState(() {});
+                            }
+                          } else {
+                            Utils.showToast("Please Enter Answer");
+                          }
+                        },
+                        child: Container(
+                          height: 40,
+                          width: 80,
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                              color: const Color(0xFF1D343F),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all()),
+                          child: const Center(
+                              child: Text(
+                            "Submit",
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          )),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      total = number1 + number2;
-                      if (sumController.text.toString() != "") {
-                        homeCubit.insertnumber(numberController.text.toString(),
-                            sumController.text.toString(), total);
-                        sumController.clear();
-                        numberController.clear();
-                        Navigator.pop(context);
-                        FocusScope.of(context).unfocus();
-                      } else {
-                        Utils.showToast("Please Enter Answer");
-                      }
-                    },
-                    child: Container(
-                      height: 40,
-                      width: 80,
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                          color: const Color(0xFF1D343F),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all()),
-                      child: const Center(
-                          child: Text(
-                        "Submit",
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      )),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );

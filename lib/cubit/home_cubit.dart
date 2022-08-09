@@ -1,7 +1,5 @@
-import 'package:bloc_demo/cubit/home_page.dart';
 import 'package:bloc_demo/cubit/home_state.dart';
 import 'package:bloc_demo/service/api_service.dart';
-import 'package:bloc_demo/utils/util.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as bloc;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,27 +8,28 @@ class HomeCubit extends Cubit<HomeState> {
 
   String text = "";
   String number1 = "";
+  int newnumber = 0;
 
-  // int newnumber = 0;
-
-  insertnumber(String number, String sum, int total) {
-    if (sum.toString() == total.toString()) {
-      emit(HomeLoadingState());
-      try {
-        ApiServices().insertNumber(number).then((value) async {
-          if (value.data.found == true) {
-            text = value.data.text.toString();
-            number1 = value.data.number.toString();
-            emit(HomeStopLoadingState());
-          } else {
-            emit(HomeErrorState("Unremarkable Number"));
-          }
-        });
-      } catch (e) {
-        emit(HomeErrorState(e.toString()));
-      }
+  insertnumber(String number) {
+    newnumber = int.parse(number);
+    if (newnumber > 5) {
+      newnumber = newnumber - 5;
     } else {
-      Utils.showToast("Wrong Answer");
+      newnumber = 0;
+    }
+    emit(HomeLoadingState());
+    try {
+      ApiServices().insertNumber(newnumber.toString()).then((value) async {
+        if (value.data.found == true) {
+          text = value.data.text.toString();
+          number1 = value.data.number.toString();
+          emit(HomeStopLoadingState());
+        } else {
+          emit(HomeErrorState("Unremarkable Number"));
+        }
+      });
+    } catch (e) {
+      emit(HomeErrorState(e.toString()));
     }
   }
 
