@@ -8,10 +8,12 @@ class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(HomeInitState());
 
   String text = "";
+  String enterNumber = "";
   int newnumber = 0;
   int total = 0;
 
   insertnumber(String number) {
+    enterNumber = number;
     if (number.isNotEmpty) {
       newnumber = int.parse(number);
       if (newnumber > 5) {

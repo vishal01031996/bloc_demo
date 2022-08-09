@@ -20,9 +20,8 @@ class _HomePageState extends State<HomePage> {
   final HomeCubit homeCubit = HomeCubit();
   TextEditingController numberController = TextEditingController();
   TextEditingController sumController = TextEditingController();
-  int total = 0;
-  int number1 = Random().nextInt(10);
-  int number2 = Random().nextInt(10);
+  int number1 = 0;
+  int number2 = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                       child: Column(
                         children: [
                           Text(
-                            "Entered Number = ${numberController.text.toString()}",
+                            "Entered Number = ${homeCubit.enterNumber.toString()}",
                             style: const TextStyle(
                                 fontSize: 16, color: Colors.black),
                           ),
