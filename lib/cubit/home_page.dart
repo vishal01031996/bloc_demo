@@ -5,6 +5,7 @@ import 'package:bloc_demo/cubit/home_state.dart';
 import 'package:bloc_demo/utils/util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 
@@ -20,8 +21,8 @@ class _HomePageState extends State<HomePage> {
   TextEditingController numberController = TextEditingController();
   TextEditingController sumController = TextEditingController();
   int total = 0;
-  int number1 = 0;
-  int number2 = 0;
+  int number1 = Random().nextInt(10);
+  int number2 = Random().nextInt(10);
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +45,18 @@ class _HomePageState extends State<HomePage> {
           listener: (context, state) {
             if (state is HomeLoadingState) {
               Utils.showLoader(context);
+              Navigator.pop(context);
+              numberController.clear();
             } else if (state is HomeStopLoadingState) {
               Utils.hideLoader(context);
               setState(() {});
             } else if (state is HomeErrorState) {
               Utils.showToast(state.message);
+            } else if (state is HomeDialogueState) {
+              number1 = Random().nextInt(10);
+              number2 = Random().nextInt(10);
+              sumController.clear();
+              openDialoguebox();
             }
           },
           child: Column(
@@ -105,14 +113,9 @@ class _HomePageState extends State<HomePage> {
                     ),
                     InkWell(
                       onTap: () {
-                        if (numberController.text.toString() != "") {
-                          number1 = Random().nextInt(10);
-                          number2 = Random().nextInt(10);
-                          setState(() {});
-                          openDialoguebox();
-                        } else {
-                          Utils.showToast("Please Enter Number");
-                        }
+                        homeCubit
+                            .insertnumber(numberController.text.toString());
+                        FocusScope.of(context).unfocus();
                       },
                       child: Container(
                         height: 40,
@@ -173,7 +176,7 @@ class _HomePageState extends State<HomePage> {
                       child: Column(
                         children: [
                           Text(
-                            "Entered Number = ${homeCubit.number1}",
+                            "Entered Number = ${numberController.text.toString()}",
                             style: const TextStyle(
                                 fontSize: 16, color: Colors.black),
                           ),
@@ -274,28 +277,8 @@ class _HomePageState extends State<HomePage> {
                       ),
                       InkWell(
                         onTap: () {
-                          total = number1 + number2;
-                          if (sumController.text.toString() != "") {
-                            if (sumController.text.toString() ==
-                                total.toString()) {
-                              homeCubit.insertnumber(
-                                numberController.text.toString(),
-                              );
-                              sumController.clear();
-                              numberController.clear();
-                              Navigator.pop(context);
-                              FocusScope.of(context).unfocus();
-                            } else {
-                              Utils.showToast("Wrong Answer");
-                              sumController.clear();
-                              number1 = Random().nextInt(10);
-                              number2 = Random().nextInt(10);
-                              FocusScope.of(context).unfocus();
-                              setState(() {});
-                            }
-                          } else {
-                            Utils.showToast("Please Enter Answer");
-                          }
+                          homeCubit.sumtwoNumber(
+                              sumController.text.toString(), number1, number2);
                         },
                         child: Container(
                           height: 40,

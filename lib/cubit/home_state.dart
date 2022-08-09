@@ -11,3 +11,5 @@ class HomeErrorState extends HomeState {
 
   HomeErrorState(this.message);
 }
+
+class HomeDialogueState extends HomeState {}

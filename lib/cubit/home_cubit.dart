@@ -1,5 +1,6 @@
 import 'package:bloc_demo/cubit/home_state.dart';
 import 'package:bloc_demo/service/api_service.dart';
+import 'package:bloc_demo/utils/util.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as bloc;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -7,29 +8,42 @@ class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(HomeInitState());
 
   String text = "";
-  String number1 = "";
   int newnumber = 0;
+  int total = 0;
 
   insertnumber(String number) {
-    newnumber = int.parse(number);
-    if (newnumber > 5) {
-      newnumber = newnumber - 5;
+    if (number.isNotEmpty) {
+      newnumber = int.parse(number);
+      if (newnumber > 5) {
+        newnumber = newnumber - 5;
+      } else {
+        newnumber = 0;
+      }
+      emit(HomeDialogueState());
     } else {
-      newnumber = 0;
+      Utils.showToast("Please Enter Number");
     }
-    emit(HomeLoadingState());
-    try {
-      ApiServices().insertNumber(newnumber.toString()).then((value) async {
-        if (value.data.found == true) {
-          text = value.data.text.toString();
-          number1 = value.data.number.toString();
-          emit(HomeStopLoadingState());
-        } else {
-          emit(HomeErrorState("Unremarkable Number"));
-        }
-      });
-    } catch (e) {
-      emit(HomeErrorState(e.toString()));
+  }
+
+  sumtwoNumber(String sum, int number1, int number2) {
+    total = number1 + number2;
+    if (sum.toString() == total.toString()) {
+      emit(HomeLoadingState());
+      try {
+        ApiServices().insertNumber(newnumber.toString()).then((value) async {
+          if (value.data.found == true) {
+            text = value.data.text.toString();
+            emit(HomeStopLoadingState());
+          } else {
+            emit(HomeErrorState("Unremarkable Number"));
+          }
+        });
+      } catch (e) {
+        emit(HomeErrorState(e.toString()));
+      }
+    } else {
+      Utils.showToast("Wrong Answer");
+      emit(HomeDialogueState());
     }
   }
 
@@ -39,7 +53,6 @@ class HomeCubit extends Cubit<HomeState> {
       ApiServices().randomnumber().then((value) {
         if (value.data.found == true) {
           text = value.data.text.toString();
-          number1 = value.data.number.toString();
           emit(HomeStopLoadingState());
         } else {
           emit(HomeErrorState("Unremarkable Number"));
