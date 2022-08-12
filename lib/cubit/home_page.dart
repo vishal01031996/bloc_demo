@@ -5,7 +5,6 @@ import 'package:bloc_demo/cubit/home_state.dart';
 import 'package:bloc_demo/utils/util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 
@@ -20,8 +19,8 @@ class _HomePageState extends State<HomePage> {
   final HomeCubit homeCubit = HomeCubit();
   TextEditingController numberController = TextEditingController();
   TextEditingController sumController = TextEditingController();
-  int number1 = 0;
-  int number2 = 0;
+  int firstNumber = 0;
+  int secondNumber = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -38,161 +37,181 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           )),
-      body: SingleChildScrollView(
-        child: BlocListener<HomeCubit, HomeState>(
-          bloc: homeCubit,
-          listener: (context, state) {
-            if (state is HomeLoadingState) {
-              Utils.showLoader(context);
-              Navigator.pop(context);
-              numberController.clear();
-            } else if (state is HomeStopLoadingState) {
-              Utils.hideLoader(context);
-              setState(() {});
-            } else if (state is HomeErrorState) {
-              Utils.showToast(state.message);
-            } else if (state is HomeDialogueState) {
-              number1 = Random().nextInt(10);
-              number2 = Random().nextInt(10);
-              sumController.clear();
-              openDialoguebox();
-            }
-          },
+      body: Container(
+        height: Get.height,
+        width: Get.width,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+              topRight: Radius.circular(24), topLeft: Radius.circular(24)),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
             children: [
               const SizedBox(
-                height: 20,
+                height: 18,
+              ),
+              const Text(
+                "Enter The Number",
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: CupertinoColors.activeBlue),
+              ),
+              const SizedBox(
+                height: 10,
               ),
               Container(
-                width: Get.width,
-                height: Get.height,
-                padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(24),
-                        topRight: Radius.circular(24))),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  // crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 18,
-                    ),
-                    const Text(
-                      "Enter The Number",
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: CupertinoColors.activeBlue),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      width: 130,
-                      height: 50,
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          border: Border.all(),
-                          borderRadius: BorderRadius.circular(16)),
-                      child: TextField(
-                        controller: numberController,
-                        textAlign: TextAlign.right,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          border:
-                              OutlineInputBorder(borderSide: BorderSide.none),
+                width: 130,
+                height: 50,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: BorderRadius.circular(16)),
+                child: TextField(
+                  controller: numberController,
+                  textAlign: TextAlign.right,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(borderSide: BorderSide.none),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+              InkWell(
+                onTap: () {
+                  homeCubit.insertnumber(numberController.text.toString());
+                },
+                child: Container(
+                  height: 40,
+                  width: 80,
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                      color: const Color(0xFF1D343F),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all()),
+                  child: const Center(
+                      child: Text(
+                    "Submit",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  )),
+                ),
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+              InkWell(
+                onTap: () {
+                  homeCubit.randomNumber();
+                  numberController.clear();
+                },
+                child: Container(
+                  height: 40,
+                  width: 80,
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                      color: const Color(0xFF1D343F),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all()),
+                  child: const Center(
+                      child: Text(
+                    "Random",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  )),
+                ),
+              ),
+              BlocConsumer(
+                bloc: homeCubit,
+                listener: (context, state) {
+                  if (state is HomeLoadingState) {
+                    Utils.showLoader(context);
+                  } else if (state is HomeStopLoadingState) {
+                    Utils.hideLoader(context);
+                  } else if (state is HomeErrorState) {
+                    Utils.showToast(state.message);
+                  } else if (state is HomeDialogueState) {
+                    firstNumber = Random().nextInt(10);
+                    secondNumber = Random().nextInt(10);
+                    sumController.clear();
+                    openDialoguebox();
+                  }
+                },
+                buildWhen: (context, state) {
+                  if (state is NumberSuccessApiState) {
+                    return true;
+                  } else {
+                    return false;
+                  }
+                },
+                builder: (context, state) {
+                  if (state is NumberSuccessApiState) {
+                    return Column(
+                      children: [
+                        const SizedBox(
+                          height: 40,
                         ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        homeCubit
-                            .insertnumber(numberController.text.toString());
-                        FocusScope.of(context).unfocus();
-                      },
-                      child: Container(
-                        height: 40,
-                        width: 80,
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                            color: const Color(0xFF1D343F),
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all()),
-                        child: const Center(
-                            child: Text(
-                          "Submit",
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        )),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        homeCubit.randomNumber();
-                      },
-                      child: Container(
-                        height: 40,
-                        width: 80,
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                            color: const Color(0xFF1D343F),
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all()),
-                        child: const Center(
-                            child: Text(
-                          "Random",
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        )),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    const Text(
-                      "OutPut",
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: CupertinoColors.activeBlue),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      width: Get.width,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                          border: Border.all(),
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Column(
-                        children: [
-                          Text(
-                            "Entered Number = ${homeCubit.enterNumber.toString()}",
-                            style: const TextStyle(
-                                fontSize: 16, color: Colors.black),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                            homeCubit.text,
+                        const Text(
+                          "OutPut",
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: CupertinoColors.activeBlue),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          width: Get.width,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                              border: Border.all(),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Text(
+                            state.text,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                                 fontSize: 16, color: Colors.red),
                           ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                        )
+                      ],
+                    );
+                  } else {
+                    return Column(
+                      children: [
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        const Text(
+                          "OutPut",
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: CupertinoColors.activeBlue),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          width: Get.width,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                              border: Border.all(),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: const Text(
+                            "",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 16, color: Colors.red),
+                          ),
+                        )
+                      ],
+                    );
+                  }
+                },
               )
             ],
           ),
@@ -223,7 +242,7 @@ class _HomePageState extends State<HomePage> {
                       Row(
                         children: [
                           Text(
-                            "$number1",
+                            "$firstNumber",
                             style: const TextStyle(
                                 color: Colors.red, fontSize: 20),
                           ),
@@ -238,7 +257,7 @@ class _HomePageState extends State<HomePage> {
                             width: 20,
                           ),
                           Text(
-                            "$number2",
+                            "$secondNumber",
                             style: const TextStyle(
                                 color: Colors.red, fontSize: 20),
                           ),
@@ -276,8 +295,10 @@ class _HomePageState extends State<HomePage> {
                       ),
                       InkWell(
                         onTap: () {
-                          homeCubit.sumtwoNumber(
-                              sumController.text.toString(), number1, number2);
+                          homeCubit.sumtwoNumber(sumController.text.toString(),
+                              firstNumber, secondNumber);
+                          Navigator.pop(context);
+                          FocusScope.of(context).unfocus();
                         },
                         child: Container(
                           height: 40,

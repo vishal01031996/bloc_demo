@@ -13,7 +13,6 @@ class HomeCubit extends Cubit<HomeState> {
   int total = 0;
 
   insertnumber(String number) {
-    enterNumber = number;
     if (number.isNotEmpty) {
       newnumber = int.parse(number);
       if (newnumber > 5) {
@@ -27,15 +26,17 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  sumtwoNumber(String sum, int number1, int number2) {
-    total = number1 + number2;
+  sumtwoNumber(String sum, int firstNumber, int secondnumber) {
+    total = firstNumber + secondnumber;
     if (sum.toString() == total.toString()) {
       emit(HomeLoadingState());
       try {
         ApiServices().insertNumber(newnumber.toString()).then((value) async {
           if (value.data.found == true) {
             text = value.data.text.toString();
+            enterNumber = value.data.number.toString();
             emit(HomeStopLoadingState());
+            emit(NumberSuccessApiState(text,enterNumber));
           } else {
             emit(HomeErrorState("Unremarkable Number"));
           }
@@ -55,7 +56,9 @@ class HomeCubit extends Cubit<HomeState> {
       ApiServices().randomnumber().then((value) {
         if (value.data.found == true) {
           text = value.data.text.toString();
+          enterNumber = value.data.number.toString();
           emit(HomeStopLoadingState());
+          emit(NumberSuccessApiState(text,enterNumber));
         } else {
           emit(HomeErrorState("Unremarkable Number"));
         }
