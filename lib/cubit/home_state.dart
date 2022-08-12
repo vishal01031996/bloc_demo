@@ -16,7 +16,6 @@ class HomeDialogueState extends HomeState {}
 
 class NumberSuccessApiState extends HomeState {
   String text;
-  String number;
 
-  NumberSuccessApiState(this.text, this.number);
+  NumberSuccessApiState(this.text);
 }
