@@ -1,6 +1,4 @@
-import 'package:bloc_demo/utils/util.dart';
 import 'package:dio/dio.dart';
-import 'package:get/get.dart';
 
 class ServerError implements Exception {
   int _errorCode = 0;
@@ -33,7 +31,7 @@ class ServerError implements Exception {
         break;
       case DioErrorType.response:
         _errorMessage =
-        "Received invalid status code: ${error.response!.statusCode}";
+            "Received invalid status code: ${error.response!.statusCode}";
         break;
       case DioErrorType.sendTimeout:
         _errorMessage = "Something went wrong";

@@ -1,8 +1,10 @@
 import 'package:bloc_demo/cubit/home_state.dart';
+import 'package:bloc_demo/cubit/multibloc/multi_bloc_cubit.dart';
 import 'package:bloc_demo/service/api_service.dart';
 import 'package:bloc_demo/utils/util.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as bloc;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(HomeInitState());
@@ -55,7 +57,8 @@ class HomeCubit extends Cubit<HomeState> {
         if (value.data.found == true) {
           text = value.data.text.toString();
           emit(HomeStopLoadingState());
-          emit(NumberSuccessApiState(text));
+          Get.context?.read<MultiBlocCubit>().randomValue(text);
+          // emit(NumberSuccessApiState(text));
         } else {
           emit(HomeErrorState("Unremarkable Number"));
         }

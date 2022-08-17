@@ -10,10 +10,8 @@ abstract class ApiClient {
 
   @GET('/{number}?json')
   @MultiPart()
-  Future<NumberResponce> getResultbyNumber(
-      @Path("number") String number);
+  Future<NumberResponce> getResultbyNumber(@Path("number") String number);
 
   @GET('/random/trivia?json')
   Future<NumberResponce> getRandomResult();
 }
-

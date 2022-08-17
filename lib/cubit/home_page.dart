@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final HomeCubit homeCubit = HomeCubit();
+  HomeCubit homeCubit = HomeCubit();
   TextEditingController numberController = TextEditingController();
   TextEditingController sumController = TextEditingController();
   int firstNumber = 0;
