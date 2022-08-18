@@ -1,6 +1,7 @@
 import 'package:bloc_demo/cubit/appbar/my_appbar.dart';
-import 'package:bloc_demo/cubit/home_cubit.dart';
-import 'package:bloc_demo/cubit/home_page.dart';
+import 'package:bloc_demo/cubit/home/home_cubit.dart';
+import 'package:bloc_demo/cubit/home/home_page.dart';
+import 'package:bloc_demo/cubit/numbertext_trivia/numbertext_trivia.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         getPages: [
           GetPage(name: "/myappbar", page: () => MyAppBar()),
           GetPage(name: "/homepage", page: () => HomePage()),
+          GetPage(name: "/numbertext", page: () => NumberTextTrivia())
         ],
         home: const MyAppBar(),
       ),

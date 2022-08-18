@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:bloc_demo/cubit/home_cubit.dart';
-import 'package:bloc_demo/cubit/home_state.dart';
+import 'package:bloc_demo/cubit/home/home_cubit.dart';
+import 'package:bloc_demo/cubit/home/home_state.dart';
 import 'package:bloc_demo/utils/util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

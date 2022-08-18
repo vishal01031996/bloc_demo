@@ -1,4 +1,4 @@
-import 'package:bloc_demo/cubit/home_cubit.dart';
+import 'package:bloc_demo/cubit/home/home_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -29,7 +29,6 @@ class _MyAppBarState extends State<MyAppBar> {
               IconButton(
                   onPressed: () {
                     Get.context?.read<HomeCubit>().randomNumber();
-                    Get.offNamed("/homepage");
                   },
                   icon: const Icon(Icons.notification_important_sharp))
             ],
